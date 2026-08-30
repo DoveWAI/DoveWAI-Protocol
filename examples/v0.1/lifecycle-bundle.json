@@ -1,0 +1,51 @@
+[
+  {
+    "protocol_version": "0.1",
+    "id": "task:lifecycle:demo",
+    "type": "task",
+    "created_at": "2026-08-31T00:00:00Z",
+    "intent": "Perform portable work",
+    "inputs": {"value": 42},
+    "required_capabilities": ["example.work"]
+  },
+  {
+    "protocol_version": "0.1",
+    "id": "claim:lifecycle:demo",
+    "type": "claim",
+    "created_at": "2026-08-31T00:00:01Z",
+    "task_id": "task:lifecycle:demo",
+    "holder_id": "worker:demo",
+    "mode": "write",
+    "lease_expires_at": "2026-08-31T00:05:00Z",
+    "lease_generation": 1,
+    "scope": "task:task:lifecycle:demo"
+  },
+  {
+    "protocol_version": "0.1",
+    "id": "event:lifecycle:demo:1",
+    "type": "execution_event",
+    "created_at": "2026-08-31T00:00:02Z",
+    "task_id": "task:lifecycle:demo",
+    "event_type": "started",
+    "sequence": 1
+  },
+  {
+    "protocol_version": "0.1",
+    "id": "event:lifecycle:demo:2",
+    "type": "execution_event",
+    "created_at": "2026-08-31T00:00:03Z",
+    "task_id": "task:lifecycle:demo",
+    "event_type": "completed",
+    "sequence": 2
+  },
+  {
+    "protocol_version": "0.1",
+    "id": "result:lifecycle:demo",
+    "type": "result",
+    "created_at": "2026-08-31T00:00:04Z",
+    "task_id": "task:lifecycle:demo",
+    "status": "succeeded",
+    "outputs": {"answer": 42},
+    "provenance": [{"source": "urn:example:source:42", "acquired_at": "2026-08-31T00:00:03Z"}]
+  }
+]
