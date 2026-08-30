@@ -1,0 +1,19 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dovewai-protocol"
+version = "0.1.0"
+description = "Reference Python SDK for DoveWAI Protocol"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "DoveWAI" }]
+dependencies = ["jsonschema[format]>=4.23,<5"]
+
+[project.urls]
+Repository = "https://github.com/DoveWAI/DoveWAI-Protocol"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dovewai_protocol"]
