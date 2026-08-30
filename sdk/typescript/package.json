@@ -6,11 +6,13 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test dist/test.js"
   },
   "devDependencies": {
+    "@types/node": ">=22 <25",
     "typescript": ">=5.5 <6"
   },
   "repository": {
