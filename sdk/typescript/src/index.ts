@@ -1,6 +1,7 @@
 export const PROTOCOL_VERSION = "0.1" as const;
 
 type Envelope = Record<string, unknown>;
+export type A2AMappedState = "working" | "input_required" | "auth_required" | "succeeded" | "failed" | "cancelled" | "rejected";
 
 const now = () => new Date().toISOString();
 
@@ -39,8 +40,8 @@ export function fromA2ATask(a2aTask: Record<string, unknown>, doveTaskId: string
   });
 }
 
-export function mapA2AState(state: string): "working" | "input_required" | "auth_required" | "succeeded" | "failed" | "cancelled" | "rejected" {
-  const mapping: Record<string, ReturnType<typeof mapA2AState>> = {
+export function mapA2AState(state: string): A2AMappedState {
+  const mapping: Record<string, A2AMappedState> = {
     TASK_STATE_SUBMITTED: "working",
     TASK_STATE_WORKING: "working",
     TASK_STATE_INPUT_REQUIRED: "input_required",
