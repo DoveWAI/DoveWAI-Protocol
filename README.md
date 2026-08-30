@@ -40,6 +40,22 @@ The v0.1 work objects are:
 - `Provenance`
 - `ProtocolError`
 
+## Conformance
+
+Reference conformance vectors live in [`conformance/v0.1`](conformance/v0.1). A small Python reference validator is available at [`tools/validate.py`](tools/validate.py).
+
+```bash
+python -m pip install -r requirements-dev.txt
+python tools/validate.py conformance/v0.1/valid/task.json
+pytest -q
+```
+
+Valid vectors must pass the published v0.1 JSON Schema. Invalid vectors must be rejected. Conformance to the DoveWAI envelope does not imply conformance to any underlying MCP, A2A, provider, transport, authorization, or telemetry protocol.
+
+## Interoperability
+
+See [`INTEROPERABILITY.md`](INTEROPERABILITY.md) for the mapping boundaries with MCP, A2A, and OpenTelemetry, and [`VERSIONING.md`](VERSIONING.md) for protocol-version and extension rules.
+
 ## Design principles
 
 DoveWAI Protocol uses explicit versioning, globally unique identifiers, UTC timestamps, conservative extensibility, deterministic validation, least-authority claims, and provenance that can point to external evidence without embedding secrets.
