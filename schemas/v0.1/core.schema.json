@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.1/core.schema.json",
+  "title": "DoveWAI Protocol v0.1 Core",
+  "oneOf": [
+    { "$ref": "#/$defs/task" },
+    { "$ref": "#/$defs/capability" },
+    { "$ref": "#/$defs/claim" },
+    { "$ref": "#/$defs/executionEvent" },
+    { "$ref": "#/$defs/result" },
+    { "$ref": "#/$defs/error" }
+  ],
+  "$defs": {
+    "base": {
+      "type": "object",
+      "required": ["protocol_version", "id", "type", "created_at"],
+      "properties": {
+        "protocol_version": { "const": "0.1" },
+        "id": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "type": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "extensions": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9.-]+$" },
+          "additionalProperties": true
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "acquired_at": { "type": "string", "format": "date-time" },
+        "digest": {
+          "type": "object",
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "type": "string", "enum": ["sha256", "sha384", "sha512"] },
+            "value": { "type": "string", "minLength": 1 }
+          },
+          "additionalProperties": false
+        },
+        "media_type": { "type": "string" },
+        "transformation": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "task": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["intent"],
+          "properties": {
+            "type": { "const": "task" },
+            "intent": { "type": "string", "minLength": 1 },
+            "inputs": { "type": "object", "additionalProperties": true },
+            "required_capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "constraints": { "type": "object", "additionalProperties": true },
+            "deadline": { "type": "string", "format": "date-time" },
+            "correlation_id": { "type": "string" },
+            "parent_task_id": { "type": "string" },
+            "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "capability": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "type": { "const": "capability" },
+            "name": { "type": "string", "minLength": 1 },
+            "version": { "type": "string", "minLength": 1 },
+            "features": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "input_schema": { "type": "object" },
+            "output_schema": { "type": "object" },
+            "limits": { "type": "object", "additionalProperties": true }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "claim": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["task_id", "holder_id", "mode", "lease_expires_at"],
+          "properties": {
+            "type": { "const": "claim" },
+            "task_id": { "type": "string", "minLength": 1 },
+            "holder_id": { "type": "string", "minLength": 1 },
+            "mode": { "enum": ["read", "write"] },
+            "lease_expires_at": { "type": "string", "format": "date-time" },
+            "lease_generation": { "type": "integer", "minimum": 0 },
+            "scope": { "type": "string" }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "executionEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["task_id", "event_type"],
+          "properties": {
+            "type": { "const": "execution_event" },
+            "task_id": { "type": "string", "minLength": 1 },
+            "event_type": { "type": "string", "minLength": 1 },
+            "sequence": { "type": "integer", "minimum": 0 },
+            "payload": { "type": "object", "additionalProperties": true },
+            "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "result": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["task_id", "status"],
+          "properties": {
+            "type": { "const": "result" },
+            "task_id": { "type": "string", "minLength": 1 },
+            "status": { "enum": ["succeeded", "partial", "failed", "cancelled"] },
+            "outputs": { "type": "object", "additionalProperties": true },
+            "warnings": { "type": "array", "items": { "type": "string" } },
+            "metrics": { "type": "object", "additionalProperties": true },
+            "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "error": {
+      "allOf": [
+        { "$ref": "#/$defs/base" },
+        {
+          "type": "object",
+          "required": ["code", "message"],
+          "properties": {
+            "type": { "const": "error" },
+            "task_id": { "type": "string" },
+            "code": { "type": "string", "minLength": 1 },
+            "message": { "type": "string", "minLength": 1 },
+            "retryable": { "type": "boolean" },
+            "details": { "type": "object", "additionalProperties": true },
+            "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}
