@@ -53,7 +53,7 @@ def protocol_error(id: str, code: str, message: str, *, task_id: str | None = No
     value.update(extra)
     return value
 
-from .adapters import from_a2a_task, from_mcp_result
+from .adapters import from_a2a_task, from_mcp_result, map_a2a_state
 from .validation import validate_envelope
 
-__all__ = ["PROTOCOL_VERSION", "task", "claim", "execution_event", "result", "protocol_error", "from_a2a_task", "from_mcp_result", "validate_envelope"]
+__all__ = ["PROTOCOL_VERSION", "task", "claim", "execution_event", "result", "protocol_error", "from_a2a_task", "from_mcp_result", "map_a2a_state", "validate_envelope"]
