@@ -1,0 +1,6 @@
+[
+  {"protocol_version":"0.2","id":"task-a","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"A"},
+  {"protocol_version":"0.2","id":"task-b","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"B"},
+  {"protocol_version":"0.2","id":"result-a","type":"Result","created_at":"2026-09-06T00:00:01Z","task_id":"task-a","status":"succeeded"},
+  {"protocol_version":"0.2","id":"receipt-mismatch","type":"WorkReceipt","created_at":"2026-09-06T00:00:02Z","task_id":"task-b","result_id":"result-a","status":"recorded"}
+]

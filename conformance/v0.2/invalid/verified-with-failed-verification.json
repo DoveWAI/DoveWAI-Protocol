@@ -1,0 +1,6 @@
+[
+  {"protocol_version":"0.2","id":"task-vf-bad","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"Contradictory verification demo"},
+  {"protocol_version":"0.2","id":"result-vf-bad","type":"Result","created_at":"2026-09-06T00:00:01Z","task_id":"task-vf-bad","status":"succeeded"},
+  {"protocol_version":"0.2","id":"verification-vf-bad","type":"Verification","created_at":"2026-09-06T00:00:02Z","subject":{"type":"Result","id":"result-vf-bad"},"verifier_id":"verifier-1","method":"test","outcome":"failed"},
+  {"protocol_version":"0.2","id":"receipt-vf-bad","type":"WorkReceipt","created_at":"2026-09-06T00:00:03Z","task_id":"task-vf-bad","result_id":"result-vf-bad","verification_ids":["verification-vf-bad"],"status":"verified"}
+]
