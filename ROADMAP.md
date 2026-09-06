@@ -1,6 +1,6 @@
 # Roadmap
 
-## v0.1 — executable draft
+## v0.1 — frozen executable draft
 
 - Normative JSON Schema for Task, Capability, Claim, ExecutionEvent, Result, Provenance, and ProtocolError.
 - Positive and negative conformance vectors.
@@ -9,22 +9,52 @@
 - MCP, A2A, and OpenTelemetry interoperability guidance.
 - Governance, contribution, security, trademark, versioning, and research-review documentation.
 
-## v0.2 — interoperability hardening
+v0.1 remains available for compatibility. New features target v0.2 and later.
 
-- More conformance vectors for every core object.
-- Explicit source-protocol version fields in adapter extension profiles.
-- Capability negotiation examples.
-- Lease renewal/fencing guidance and stale-claim examples.
-- Provenance profile for digests, immutable artifacts, and evidence references.
-- Cross-language golden-vector tests.
+## v0.2 — current / recommended for new implementations
 
-## v0.3 — ecosystem readiness
+v0.2 establishes DoveWAI Protocol as a portable protocol for verifiable work.
 
-- Extension registry process.
-- Reference MCP and A2A adapter packages kept outside the normative core when practical.
-- Conformance report format for third-party implementations.
-- Compatibility test corpus and implementation matrix.
+Core work:
+
+- Formalized lifecycle around Task, Claim, Attempt, Event, Artifact, Result, Verification, and WorkReceipt.
+- Explicit Attempts for retry, failover, and resume visibility.
+- Terminal-only Result semantics.
+- First-class Artifact references and digests.
+- First-class Verification records with explicit outcomes.
+- Portable WorkReceipt tying work, evidence, and verification together.
+- Idempotency guidance for duplicate execution prevention.
+- Stronger lease generation/fencing semantics.
+- Causal and attempt-aware execution events.
+- Expanded structural and lifecycle conformance coverage.
+- Explicit v0.1-to-v0.2 migration guidance.
+
+Adoption work:
+
+- Python and TypeScript v0.2 SDK surfaces.
+- Five-minute quickstart.
+- `validate`, `inspect`, and eventually `run` developer tooling.
+- Reference MCP and A2A mappings kept outside normative core semantics.
+- CloudEvents and OpenTelemetry profiles.
+- Receipt signing/attestation profiles that compose established public standards rather than inventing new trust infrastructure.
+
+## v0.3 — ecosystem hardening
+
+- Extension/profile registry process.
+- Technology Compatibility Kit and conformance report format.
+- Compatibility corpus and independent implementation matrix.
+- Go and Rust SDKs or verified third-party implementations.
+- Fuzz/property tests for parsers, extension handling, replay, and lifecycle invariants.
+- Public security threat model and adversarial conformance corpus.
+- Real integration feedback incorporated into compatibility rules.
 
 ## v1.0 criteria
 
-The protocol will not be called stable until independent implementations can exchange the complete core lifecycle without DoveWAI-hosted infrastructure, published conformance fixtures are stable, security review has covered replay/lease/provenance/parser risks, and compatibility/versioning rules have survived real integration feedback.
+The protocol will not be called stable until:
+
+- independent implementations exchange the complete core lifecycle without DoveWAI-hosted infrastructure;
+- published conformance fixtures are stable;
+- at least two independently developed implementations interoperate on v1 candidate vectors;
+- security review covers replay, leases/fencing, idempotency, provenance, artifacts, verification, receipts, parsers, and extension handling;
+- compatibility/versioning rules have survived real integrations;
+- implementation and conformance require only public DoveWAI Protocol materials.
