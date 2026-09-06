@@ -1,0 +1,131 @@
+name: Manual v0.2 Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: manual-v02-validation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  protocol:
+    name: Protocol schema and lifecycle
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install schema validator
+        run: python -m pip install "jsonschema[format]>=4.23,<5"
+
+      - name: Validate v0.2 schema and example bundle
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from jsonschema import Draft202012Validator, FormatChecker
+
+          schema = json.loads(Path("schemas/v0.2/core.schema.json").read_text())
+          Draft202012Validator.check_schema(schema)
+          validator = Draft202012Validator(schema, format_checker=FormatChecker())
+
+          bundle = json.loads(Path("examples/v0.2/verified-work-bundle.json").read_text())
+          objects = bundle.get("objects", bundle) if isinstance(bundle, dict) else bundle
+          if not isinstance(objects, list):
+              raise SystemExit("Example bundle must be an array or an object containing an 'objects' array")
+
+          for index, obj in enumerate(objects):
+              errors = sorted(validator.iter_errors(obj), key=lambda e: list(e.path))
+              if errors:
+                  details = "\n".join(f"object[{index}]: {e.message}" for e in errors)
+                  raise SystemExit(details)
+
+          print(f"VALID: schema and {len(objects)} example objects")
+          PY
+
+      - name: Validate positive lifecycle vectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(conformance/v0.2/valid/*.json)
+          test ${#files[@]} -gt 0
+          for file in "${files[@]}"; do
+            echo "Validating expected-valid vector: $file"
+            python tools/lifecycle_validate_v02.py "$file"
+          done
+
+      - name: Validate negative lifecycle vectors
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(conformance/v0.2/invalid/*.json)
+          test ${#files[@]} -gt 0
+          for file in "${files[@]}"; do
+            echo "Validating expected-invalid vector: $file"
+            if python tools/lifecycle_validate_v02.py "$file"; then
+              echo "ERROR: invalid vector unexpectedly passed: $file"
+              exit 1
+            fi
+          done
+
+  python-sdk:
+    name: Python SDK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install SDK and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e sdk/python pytest
+
+      - name: Run Python SDK tests
+        run: python -m pytest -q sdk/python/tests
+
+      - name: Import v0.2 SDK surface
+        run: |
+          python - <<'PY'
+          from dovewai_protocol import v02
+          assert v02.PROTOCOL_VERSION == "0.2"
+          print("VALID: Python v0.2 SDK import")
+          PY
+
+  typescript-sdk:
+    name: TypeScript SDK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdk/typescript
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build TypeScript SDK
+        run: npm run build
+
+      - name: Run TypeScript SDK tests
+        run: npm test
