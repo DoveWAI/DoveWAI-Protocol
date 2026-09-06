@@ -1,0 +1,23 @@
+{
+  "specversion": "1.0",
+  "id": "event-1",
+  "source": "https://example.org/worker/alpha",
+  "type": "org.dovewai.protocol.v0_2.ExecutionEvent",
+  "subject": "task-1",
+  "time": "2026-09-06T00:00:10Z",
+  "datacontenttype": "application/json",
+  "data": {
+    "protocol_version": "0.2",
+    "id": "event-1",
+    "type": "ExecutionEvent",
+    "created_at": "2026-09-06T00:00:10Z",
+    "task_id": "task-1",
+    "attempt_id": "attempt-1",
+    "event_type": "tool.completed",
+    "sequence": 2,
+    "data": {
+      "tool": "example.search",
+      "status": "ok"
+    }
+  }
+}
