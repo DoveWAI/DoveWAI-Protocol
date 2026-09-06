@@ -1,0 +1,100 @@
+[
+  {
+    "protocol_version": "0.2",
+    "id": "task-demo-1",
+    "type": "Task",
+    "created_at": "2026-09-06T00:00:00Z",
+    "intent": "Build and verify a release artifact",
+    "required_capabilities": ["build.release"],
+    "idempotency_key": "release-demo-1"
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "claim-demo-1",
+    "type": "Claim",
+    "created_at": "2026-09-06T00:00:01Z",
+    "task_id": "task-demo-1",
+    "holder_id": "urn:example:worker:build-7",
+    "mode": "write",
+    "lease_expires_at": "2026-09-06T00:10:00Z",
+    "lease_generation": 3,
+    "fencing_token": "3"
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "attempt-demo-1",
+    "type": "Attempt",
+    "created_at": "2026-09-06T00:00:02Z",
+    "task_id": "task-demo-1",
+    "claim_id": "claim-demo-1",
+    "executor_id": "urn:example:worker:build-7",
+    "attempt_number": 1,
+    "status": "succeeded",
+    "started_at": "2026-09-06T00:00:02Z",
+    "ended_at": "2026-09-06T00:00:20Z"
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "event-demo-1",
+    "type": "ExecutionEvent",
+    "created_at": "2026-09-06T00:00:03Z",
+    "task_id": "task-demo-1",
+    "attempt_id": "attempt-demo-1",
+    "event_type": "org.dovewai.started",
+    "sequence": 1
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "artifact-demo-1",
+    "type": "Artifact",
+    "created_at": "2026-09-06T00:00:18Z",
+    "task_id": "task-demo-1",
+    "attempt_id": "attempt-demo-1",
+    "uri": "urn:example:artifact:release-1",
+    "media_type": "application/octet-stream",
+    "size": 2048,
+    "digest": {
+      "algorithm": "sha256",
+      "value": "8f434346648f6b96df89dda901c5176b10a6d83961dd3c1ac88b59b2dc327aa4"
+    },
+    "producer_id": "urn:example:worker:build-7"
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "result-demo-1",
+    "type": "Result",
+    "created_at": "2026-09-06T00:00:20Z",
+    "task_id": "task-demo-1",
+    "attempt_id": "attempt-demo-1",
+    "status": "succeeded",
+    "artifact_ids": ["artifact-demo-1"]
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "verification-demo-1",
+    "type": "Verification",
+    "created_at": "2026-09-06T00:00:21Z",
+    "subject": {"type": "Result", "id": "result-demo-1"},
+    "verifier_id": "urn:example:verifier:test-suite",
+    "method": "test-suite",
+    "outcome": "passed",
+    "artifact_ids": ["artifact-demo-1"],
+    "observations": {"tests": 42, "passed": 42}
+  },
+  {
+    "protocol_version": "0.2",
+    "id": "receipt-demo-1",
+    "type": "WorkReceipt",
+    "created_at": "2026-09-06T00:00:22Z",
+    "task_id": "task-demo-1",
+    "result_id": "result-demo-1",
+    "claim_id": "claim-demo-1",
+    "attempt_ids": ["attempt-demo-1"],
+    "artifact_ids": ["artifact-demo-1"],
+    "verification_ids": ["verification-demo-1"],
+    "status": "verified",
+    "issued_by": "urn:example:receipt-service",
+    "started_at": "2026-09-06T00:00:02Z",
+    "completed_at": "2026-09-06T00:00:21Z"
+  }
+]

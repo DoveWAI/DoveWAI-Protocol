@@ -1,85 +1,93 @@
 # DoveWAI Protocol
 
-DoveWAI Protocol is an open interoperability protocol for reliable AI work across agents, tools, runtimes, people, and services.
+DoveWAI Protocol is an open, vendor-neutral protocol for verifiable AI and automated work across agents, tools, runtimes, people, and services.
 
-It defines a small, vendor-neutral work lifecycle:
+It defines a durable work lifecycle that records what was requested, who or what accepted responsibility, what execution actually occurred, what artifacts were produced, how the outcome was verified, and what portable receipt can be independently inspected.
 
-`Task -> Capability -> Claim/Lease -> Execution Event -> Result -> Provenance/Error`
+## Current recommended version
 
-The protocol is designed to complement existing standards rather than replace them. MCP can expose tools and context, A2A can connect independent agents, and OpenTelemetry can carry telemetry. DoveWAI Protocol focuses on the durable work contract around execution: what was requested, who or what claimed it, what happened, what result was produced, and how that result can be traced.
+**DoveWAI Protocol v0.2 is the recommended version for all new implementations.**
 
-## Goals
+The v0.2 lifecycle is:
 
-- Portable task and result envelopes across runtimes and vendors.
-- Explicit capability requirements and offers.
-- Safe claim/lease semantics for distributed workers.
-- Structured execution events and failure states.
-- First-class provenance and evidence references.
-- Compatibility with existing agent, tool, and observability standards.
-- Small schemas that can be implemented without DoveWAI Cloud.
+`Task -> Capability -> Claim/Lease -> Attempt -> ExecutionEvent/Artifact -> Result -> Verification -> WorkReceipt`
 
-## Non-goals
+v0.1 remains published for compatibility and must not be silently reinterpreted as v0.2. See [`migration/v0.1-to-v0.2.md`](migration/v0.1-to-v0.2.md).
 
-- Replacing MCP tool invocation.
-- Replacing A2A agent-to-agent communication.
-- Defining a model provider API.
-- Requiring DoveWAI-hosted infrastructure.
-- Exposing DoveWAI private orchestration, customer data, ranking systems, or internal automation.
+## Why DoveWAI Protocol exists
 
-## v0.1
+MCP can expose tools and context. A2A can connect independent agents. CloudEvents can carry event envelopes. OpenTelemetry can carry telemetry. DoveWAI Protocol complements those standards by defining a transport-neutral, portable work contract around execution and verification.
 
-The initial specification lives in [`spec/v0.1/SPEC.md`](spec/v0.1/SPEC.md), with the normative JSON Schema in [`schemas/v0.1/core.schema.json`](schemas/v0.1/core.schema.json).
+A conforming implementation can answer:
 
-The v0.1 work objects are:
+- What work was requested?
+- What capabilities were required or offered?
+- Who or what held the active claim or lease?
+- Which execution attempt produced the outcome?
+- Which events and artifacts were produced?
+- What terminal result was declared?
+- What verification was performed, by whom, and with what outcome?
+- What portable receipt ties the work and evidence together?
+
+## Public and independent by design
+
+The public DoveWAI Protocol specification, schemas, conformance tests, reference SDKs, profiles, examples, and migration guidance MUST NOT require access to non-public DoveWAI software or documentation for implementation or conformance.
+
+The protocol does not require DoveWAI-hosted infrastructure.
+
+## v0.2 core objects
+
+The v0.2 specification lives in [`spec/v0.2/SPEC.md`](spec/v0.2/SPEC.md), with its normative JSON Schema in [`schemas/v0.2/core.schema.json`](schemas/v0.2/core.schema.json).
+
+Core objects are:
 
 - `Task`
 - `Capability`
 - `Claim`
+- `Attempt`
 - `ExecutionEvent`
+- `Artifact`
 - `Result`
+- `Verification`
+- `WorkReceipt`
 - `Provenance`
 - `ProtocolError`
 
+`Result` is terminal in v0.2. Intermediate progress or partial output belongs in execution events, checkpoints, or artifacts.
+
 ## Reference SDKs
 
-Two small reference SDK surfaces live in this repository:
+Reference SDK surfaces live in this repository:
 
-- [`sdk/python`](sdk/python) — Python builders, schema validation, MCP result normalization, A2A task wrapping, and fail-closed A2A state mapping.
-- [`sdk/typescript`](sdk/typescript) — TypeScript builders, MCP/A2A adapters, and fail-closed A2A state mapping.
+- [`sdk/python`](sdk/python)
+- [`sdk/typescript`](sdk/typescript)
 
-The SDKs are intentionally thin. They do not require DoveWAI Cloud and they do not hide the underlying protocol objects.
+The SDKs remain intentionally thin and expose the underlying protocol objects directly.
 
 ## Conformance
 
-Reference conformance vectors live in [`conformance/v0.1`](conformance/v0.1). Structural validation and lifecycle validation are separate on purpose.
+Reference vectors live under [`conformance`](conformance). Structural validation and lifecycle validation remain separate.
 
-```bash
-python -m pip install -r requirements-dev.txt
-python tools/validate.py conformance/v0.1/valid/task.json
-pytest -q
-```
-
-`tools/validate.py` checks one envelope against the normative JSON Schema. `tools/lifecycle_validate.py` checks relationships across a bundle, including task references, lease timing, execution-event ordering, and duplicate terminal results.
-
-Valid vectors must pass the published v0.1 JSON Schema. Invalid vectors must be rejected. Conformance to a DoveWAI envelope does not imply conformance to any underlying MCP, A2A, provider, transport, authorization, or telemetry protocol.
+For v0.2, conformance expands beyond schema validity to cover task references, claims, attempts, event ordering, terminal-result rules, verification references, and work-receipt integrity.
 
 ## Interoperability
 
-See [`INTEROPERABILITY.md`](INTEROPERABILITY.md) for mapping boundaries with MCP, A2A, and OpenTelemetry, and [`VERSIONING.md`](VERSIONING.md) for protocol-version and extension rules.
+See [`INTEROPERABILITY.md`](INTEROPERABILITY.md) for protocol boundaries and mapping guidance, and [`VERSIONING.md`](VERSIONING.md) for compatibility and extension rules.
 
-The adapters preserve source identifiers and fail closed on unknown A2A states rather than silently guessing. Credential or authentication challenges must remain outside model-fillable task data.
-
-## Design review
-
-The v0.1 implementation layer was informed by a breadth-first review of more than 49 public repositories across protocol, bridge, SDK, orchestration, schema, and conformance projects. The resulting design lessons are recorded in [`RESEARCH_49_REPOS.md`](RESEARCH_49_REPOS.md). This is a repository-level architecture review, not a claim that every line of every project was audited.
+DoveWAI Protocol does not replace MCP tool invocation, A2A agent communication, model-provider APIs, authentication systems, transports, telemetry systems, or supply-chain signing systems. Optional mappings and profiles may compose those standards without changing the core wire semantics.
 
 ## Design principles
 
-DoveWAI Protocol uses explicit versioning, globally unique identifiers, UTC timestamps, conservative extensibility, deterministic validation, least-authority claims, fail-closed mappings, and provenance that can point to external evidence without embedding secrets.
+DoveWAI Protocol uses explicit versioning, globally unique identifiers, UTC timestamps, deterministic validation, least-authority claims, explicit attempts, terminal results, independent verification records, evidence references, conservative extensibility, and fail-closed behavior where ambiguity would create unsafe interoperability.
 
-## Status
+A receipt records what happened and what verification was performed. A receipt is not, by itself, a declaration that every underlying claim is true.
 
-**Experimental / v0.1 draft.** The schema may change before the first stable release. The repository contains the specification, normative schema, conformance vectors, lifecycle validator, Python reference SDK, TypeScript reference SDK, interoperability guidance, governance, security policy, and project licensing/trademark material.
+## Version status
+
+- **v0.2 — current / recommended for new implementations**
+- **v0.1 — frozen compatibility line**
+
+The `0.x` series remains experimental and may contain incompatible changes between minor versions. Published versioned schemas remain immutable once tagged.
 
 ## License
 
