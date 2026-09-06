@@ -1,0 +1,5 @@
+[
+  {"protocol_version":"0.2","id":"task-1","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"Demo"},
+  {"protocol_version":"0.2","id":"result-1","type":"Result","created_at":"2026-09-06T00:00:01Z","task_id":"task-1","status":"succeeded"},
+  {"protocol_version":"0.2","id":"receipt-1","type":"WorkReceipt","created_at":"2026-09-06T00:00:02Z","task_id":"task-1","result_id":"result-1","status":"verified"}
+]
