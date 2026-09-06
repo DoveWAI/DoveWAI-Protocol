@@ -1,0 +1,9 @@
+[
+  {"protocol_version":"0.2","id":"task-1","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"Produce and verify an artifact","idempotency_key":"demo-1"},
+  {"protocol_version":"0.2","id":"claim-1","type":"Claim","created_at":"2026-09-06T00:00:01Z","task_id":"task-1","holder_id":"urn:example:worker","mode":"write","lease_expires_at":"2026-09-06T00:10:00Z","lease_generation":1,"fencing_token":"1"},
+  {"protocol_version":"0.2","id":"attempt-1","type":"Attempt","created_at":"2026-09-06T00:00:02Z","task_id":"task-1","claim_id":"claim-1","attempt_number":1,"status":"succeeded"},
+  {"protocol_version":"0.2","id":"artifact-1","type":"Artifact","created_at":"2026-09-06T00:00:03Z","task_id":"task-1","attempt_id":"attempt-1","uri":"urn:example:artifact:1"},
+  {"protocol_version":"0.2","id":"result-1","type":"Result","created_at":"2026-09-06T00:00:04Z","task_id":"task-1","attempt_id":"attempt-1","status":"succeeded","artifact_ids":["artifact-1"]},
+  {"protocol_version":"0.2","id":"verification-1","type":"Verification","created_at":"2026-09-06T00:00:05Z","subject":{"type":"Result","id":"result-1"},"verifier_id":"urn:example:verifier","method":"test-suite","outcome":"passed"},
+  {"protocol_version":"0.2","id":"receipt-1","type":"WorkReceipt","created_at":"2026-09-06T00:00:06Z","task_id":"task-1","result_id":"result-1","attempt_ids":["attempt-1"],"artifact_ids":["artifact-1"],"verification_ids":["verification-1"],"status":"verified"}
+]
