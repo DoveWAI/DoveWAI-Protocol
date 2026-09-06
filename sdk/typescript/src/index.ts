@@ -1,5 +1,7 @@
 export const PROTOCOL_VERSION = "0.1" as const;
 
+export * as v02 from "./v02.js";
+
 type Envelope = Record<string, unknown>;
 export type A2AMappedState = "working" | "input_required" | "auth_required" | "succeeded" | "failed" | "cancelled" | "rejected";
 
