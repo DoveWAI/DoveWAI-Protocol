@@ -8,6 +8,8 @@ from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
 
+from .lifecycle import validate_bundle
+
 
 def _repo_root() -> Path:
     here = Path(__file__).resolve()
@@ -32,24 +34,39 @@ def _schema_validator() -> Draft202012Validator:
 
 def _objects(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, list):
-        return value
-    if isinstance(value, dict) and isinstance(value.get("objects"), list):
-        return value["objects"]
-    if isinstance(value, dict):
-        return [value]
-    raise ValueError("input must be a protocol object, array of objects, or bundle with an objects array")
+        objects = value
+    elif isinstance(value, dict) and isinstance(value.get("objects"), list):
+        objects = value["objects"]
+    elif isinstance(value, dict):
+        objects = [value]
+    else:
+        raise ValueError("input must be a protocol object, array of objects, or bundle with an objects array")
+
+    if not all(isinstance(obj, dict) for obj in objects):
+        raise ValueError("every protocol object must be a JSON object")
+    return objects
 
 
-def _schema_errors(value: Any) -> list[str]:
+def _validation_errors(value: Any) -> list[str]:
     validator = _schema_validator()
+    objects = _objects(value)
     errors: list[str] = []
-    for index, obj in enumerate(_objects(value)):
+    for index, obj in enumerate(objects):
         for error in sorted(validator.iter_errors(obj), key=lambda e: list(e.path)):
             where = ".".join(str(p) for p in error.path)
             prefix = f"object[{index}]"
             if where:
                 prefix += f".{where}"
             errors.append(f"{prefix}: {error.message}")
+
+    # Lifecycle validation assumes structurally valid protocol objects, so only
+    # run it after schema validation passes. This keeps error output stable and
+    # prevents malformed input from being mistaken for lifecycle failure.
+    if not errors:
+        try:
+            validate_bundle(objects)
+        except (ValueError, KeyError, TypeError) as exc:
+            errors.append(f"lifecycle: {exc}")
     return errors
 
 
@@ -71,7 +88,7 @@ def _emit(payload: dict[str, Any], as_json: bool) -> None:
 def cmd_validate(args: argparse.Namespace) -> int:
     try:
         value = _load(args.input)
-        errors = _schema_errors(value)
+        errors = _validation_errors(value)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         _emit({"valid": False, "errors": [str(exc)]}, args.json)
         return 2
@@ -84,7 +101,7 @@ def cmd_inspect(args: argparse.Namespace) -> int:
     try:
         value = _load(args.input)
         objects = _objects(value)
-        errors = _schema_errors(value)
+        errors = _validation_errors(value)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         _emit({"valid": False, "errors": [str(exc)]}, args.json)
         return 2
