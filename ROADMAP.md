@@ -15,7 +15,7 @@ v0.1 remains available for compatibility. New features target v0.2 and later.
 
 v0.2 establishes DoveWAI Protocol as a portable protocol for verifiable work.
 
-Core work:
+Core work completed:
 
 - Formalized lifecycle around Task, Claim, Attempt, Event, Artifact, Result, Verification, and WorkReceipt.
 - Explicit Attempts for retry, failover, and resume visibility.
@@ -29,24 +29,33 @@ Core work:
 - Expanded structural and lifecycle conformance coverage.
 - Explicit v0.1-to-v0.2 migration guidance.
 
-Adoption work:
+Adoption work completed:
 
 - Python and TypeScript v0.2 SDK surfaces.
-- Five-minute quickstart.
-- `validate`, `inspect`, and eventually `run` developer tooling.
-- Reference MCP and A2A mappings kept outside normative core semantics.
-- CloudEvents and OpenTelemetry profiles.
-- Receipt signing/attestation profiles that compose established public standards rather than inventing new trust infrastructure.
+- Five-minute quickstart and public adoption guide.
+- Installable `dovewai` CLI with `validate`, `inspect`, and `receipt`.
+- Machine-readable CLI output and stable exit codes.
+- Shared schema + lifecycle validation path.
+- Black-box CLI TCK and expanded conformance corpus.
+- Public CloudEvents, OpenTelemetry, MCP, A2A, and signing/attestation profile guidance.
+- CloudEvents profile example.
+- Manual-only GitHub validation workflow covering protocol, SDK, CLI, and TCK checks.
+
+Remaining v0.2 release operations:
+
+- publish package artifacts to PyPI/npm only after an explicit release decision and successful release validation;
+- create a signed/tagged public release when ready;
+- collect external implementation feedback.
 
 ## v0.3 — ecosystem hardening
 
 - Extension/profile registry process.
-- Technology Compatibility Kit and conformance report format.
-- Compatibility corpus and independent implementation matrix.
+- Formal conformance report format and implementation matrix.
 - Go and Rust SDKs or verified third-party implementations.
 - Fuzz/property tests for parsers, extension handling, replay, and lifecycle invariants.
 - Public security threat model and adversarial conformance corpus.
 - Real integration feedback incorporated into compatibility rules.
+- Optional richer inspector experience if real adopters need it.
 
 ## v1.0 criteria
 
