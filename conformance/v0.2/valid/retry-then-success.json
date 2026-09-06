@@ -1,0 +1,7 @@
+[
+  {"protocol_version":"0.2","id":"task-retry","type":"Task","created_at":"2026-09-06T00:00:00Z","intent":"Retry demo"},
+  {"protocol_version":"0.2","id":"attempt-1","type":"Attempt","created_at":"2026-09-06T00:00:01Z","task_id":"task-retry","attempt_number":1,"status":"failed"},
+  {"protocol_version":"0.2","id":"attempt-2","type":"Attempt","created_at":"2026-09-06T00:00:02Z","task_id":"task-retry","attempt_number":2,"status":"succeeded"},
+  {"protocol_version":"0.2","id":"result-retry","type":"Result","created_at":"2026-09-06T00:00:03Z","task_id":"task-retry","attempt_id":"attempt-2","status":"succeeded"},
+  {"protocol_version":"0.2","id":"receipt-retry","type":"WorkReceipt","created_at":"2026-09-06T00:00:04Z","task_id":"task-retry","result_id":"result-retry","attempt_ids":["attempt-1","attempt-2"],"status":"recorded"}
+]
