@@ -11,11 +11,18 @@ from jsonschema import Draft202012Validator, FormatChecker
 from .lifecycle import validate_bundle
 
 
-def _repo_root() -> Path:
+def _schema_path() -> Path:
+    """Return the canonical v0.2 schema from source checkout or installed package."""
     here = Path(__file__).resolve()
     for parent in here.parents:
-        if (parent / "schemas" / "v0.2" / "core.schema.json").exists():
-            return parent
+        candidate = parent / "schemas" / "v0.2" / "core.schema.json"
+        if candidate.exists():
+            return candidate
+
+    packaged = here.with_name("schema_v02.json")
+    if packaged.exists():
+        return packaged
+
     raise FileNotFoundError("DoveWAI Protocol v0.2 schema not found")
 
 
@@ -26,8 +33,7 @@ def _load(path: str) -> Any:
 
 
 def _schema_validator() -> Draft202012Validator:
-    schema_path = _repo_root() / "schemas" / "v0.2" / "core.schema.json"
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    schema = json.loads(_schema_path().read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
     return Draft202012Validator(schema, format_checker=FormatChecker())
 
@@ -59,9 +65,6 @@ def _validation_errors(value: Any) -> list[str]:
                 prefix += f".{where}"
             errors.append(f"{prefix}: {error.message}")
 
-    # Lifecycle validation assumes structurally valid protocol objects, so only
-    # run it after schema validation passes. This keeps error output stable and
-    # prevents malformed input from being mistaken for lifecycle failure.
     if not errors:
         try:
             validate_bundle(objects)
