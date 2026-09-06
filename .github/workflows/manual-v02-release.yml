@@ -19,7 +19,7 @@ on:
         default: false
         type: boolean
       create_github_release:
-        description: Create GitHub vVERSION tag and release
+        description: Create/update GitHub vVERSION release and attach built packages
         required: true
         default: false
         type: boolean
@@ -188,10 +188,19 @@ jobs:
         run: npm install --global npm@latest
 
       - name: Publish to npm
-        run: npm publish ./dist/*.tgz --access public
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t packages < <(find "$PWD/dist" -maxdepth 1 -type f -name '*.tgz' -print)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            echo "ERROR: expected exactly one npm package tarball, found ${#packages[@]}"
+            printf '%s\n' "${packages[@]}"
+            exit 1
+          fi
+          npm publish "${packages[0]}" --access public
 
   github-release:
-    name: Create GitHub release
+    name: Create or update GitHub release
     if: inputs.create_github_release
     needs: preflight
     runs-on: ubuntu-latest
@@ -201,11 +210,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create GitHub tag and release
+      - name: Download Python distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: python-dist-${{ inputs.version }}
+          path: release-assets/python
+
+      - name: Download npm package
+        uses: actions/download-artifact@v4
+        with:
+          name: npm-dist-${{ inputs.version }}
+          path: release-assets/npm
+
+      - name: Create or update GitHub tag and release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ inputs.version }}
         run: |
+          set -euo pipefail
           cat > /tmp/release-notes.md <<EOF
           DoveWAI Protocol v${RELEASE_VERSION}
 
@@ -213,7 +235,21 @@ jobs:
 
           This release does not require private DoveWAI infrastructure. A WorkReceipt records execution and verification evidence; it is not automatic proof that every underlying claim is true.
           EOF
-          gh release create "v${RELEASE_VERSION}" \
-            --target "${GITHUB_SHA}" \
-            --title "DoveWAI Protocol v${RELEASE_VERSION}" \
-            --notes-file /tmp/release-notes.md
+
+          if gh release view "v${RELEASE_VERSION}" >/dev/null 2>&1; then
+            gh release edit "v${RELEASE_VERSION}" \
+              --title "DoveWAI Protocol v${RELEASE_VERSION}" \
+              --notes-file /tmp/release-notes.md
+          else
+            gh release create "v${RELEASE_VERSION}" \
+              --target "${GITHUB_SHA}" \
+              --title "DoveWAI Protocol v${RELEASE_VERSION}" \
+              --notes-file /tmp/release-notes.md
+          fi
+
+          mapfile -t assets < <(find release-assets -type f \( -name '*.whl' -o -name '*.tar.gz' -o -name '*.tgz' \) -print)
+          if [ "${#assets[@]}" -eq 0 ]; then
+            echo "ERROR: no release package assets found"
+            exit 1
+          fi
+          gh release upload "v${RELEASE_VERSION}" "${assets[@]}" --clobber
