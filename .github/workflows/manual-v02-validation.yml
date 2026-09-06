@@ -28,6 +28,19 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e sdk/python
 
+      - name: Verify packaged schema matches canonical schema
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          canonical = json.loads(Path("schemas/v0.2/core.schema.json").read_text())
+          packaged = json.loads(Path("sdk/python/src/dovewai_protocol/schema_v02.json").read_text())
+          if canonical != packaged:
+              raise SystemExit("packaged Python schema copy differs from canonical v0.2 schema")
+          print("VALID: packaged schema matches canonical schema")
+          PY
+
       - name: Validate v0.2 schema and example bundle
         run: |
           python - <<'PY'
@@ -90,7 +103,7 @@ jobs:
           dovewai receipt examples/v0.2/verified-work-bundle.json --json
 
   python-sdk:
-    name: Python SDK
+    name: Python SDK and wheel
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -101,10 +114,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install SDK and test dependencies
+      - name: Install build and test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e sdk/python pytest
+          python -m pip install -e sdk/python pytest build twine
 
       - name: Run Python SDK tests
         run: python -m pytest -q sdk/python/tests
@@ -117,8 +130,40 @@ jobs:
           print("VALID: Python v0.2 SDK import")
           PY
 
+      - name: Build Python distributions
+        working-directory: sdk/python
+        run: python -m build
+
+      - name: Check Python distribution metadata
+        run: python -m twine check sdk/python/dist/*
+
+      - name: Verify wheel contains packaged schema
+        run: |
+          python - <<'PY'
+          import glob, zipfile
+          wheel = glob.glob("sdk/python/dist/*.whl")[0]
+          with zipfile.ZipFile(wheel) as zf:
+              names = set(zf.namelist())
+          required = "dovewai_protocol/schema_v02.json"
+          if required not in names:
+              raise SystemExit(f"wheel missing {required}")
+          print("VALID: wheel contains packaged v0.2 schema")
+          PY
+
+      - name: Verify installed wheel works outside repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          WHEEL=$(realpath sdk/python/dist/*.whl)
+          BUNDLE=$(realpath examples/v0.2/verified-work-bundle.json)
+          python -m venv /tmp/dovewai-wheel-test
+          /tmp/dovewai-wheel-test/bin/python -m pip install "$WHEEL"
+          cd /tmp
+          /tmp/dovewai-wheel-test/bin/dovewai validate "$BUNDLE"
+          /tmp/dovewai-wheel-test/bin/dovewai inspect "$BUNDLE" --json
+
   typescript-sdk:
-    name: TypeScript SDK
+    name: TypeScript SDK and package
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -140,3 +185,6 @@ jobs:
 
       - name: Run TypeScript SDK tests
         run: npm test
+
+      - name: Verify npm package contents
+        run: npm pack --dry-run
