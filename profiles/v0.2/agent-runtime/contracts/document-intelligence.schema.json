@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.2/profiles/agent-runtime/contracts/document-intelligence.schema.json",
+  "title": "DoveWAI Document Intelligence Record",
+  "type": "object",
+  "required": ["version", "document_id", "source", "observed_at"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "document_id": {"type": "string", "minLength": 1},
+    "source": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "media_type": {"type": "string"},
+    "language": {"type": "string"},
+    "pages": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "chunks": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "tables": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "images": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "bounding_boxes": {"type": "array", "items": {"type": "object", "additionalProperties": true}},
+    "normalized_text": {"type": "string"},
+    "translated_text": {"type": "string"},
+    "source_digest": {"type": "object", "additionalProperties": true},
+    "provenance": {"type": "array", "items": {"type": "object", "additionalProperties": true}}
+  },
+  "additionalProperties": false
+}
