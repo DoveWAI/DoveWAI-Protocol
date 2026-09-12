@@ -1,0 +1,92 @@
+{
+  "schema_version": "0.1",
+  "program": "axi-resource-protect-integration",
+  "testing_policy": {
+    "deferred_until_phase": 8,
+    "implementation_phases": [0,1,2,3,4,5,6,7],
+    "test_phase": 8
+  },
+  "principles": [
+    "local-first",
+    "cross-platform",
+    "provider-neutral",
+    "least-authority",
+    "bounded-agent-context",
+    "full-evidence-retained",
+    "license-provenance-required",
+    "no-mandatory-proprietary-component"
+  ],
+  "phases": [
+    {
+      "id": 0,
+      "name": "contracts-and-provenance",
+      "owners": ["DoveWAI-Protocol"],
+      "deliverables": [
+        "axi.invocation.v0.1",
+        "resource.snapshot.v0.1",
+        "protect.authorization.v0.1",
+        "worker.workspace.v0.1",
+        "codegraph.snapshot.v0.1",
+        "semantic.review.v0.1",
+        "source.license-decision.v0.1"
+      ],
+      "status": "mapped"
+    },
+    {
+      "id": 1,
+      "name": "dovewai-axi",
+      "owners": ["DoveWAI-Engineering-Harness"],
+      "references": ["gh-axi"],
+      "status": "mapped"
+    },
+    {
+      "id": 2,
+      "name": "resource-broker",
+      "owners": ["DoveWAI-Engineering-Harness", "DoveWAI-Personal"],
+      "references": ["quota-axi"],
+      "status": "mapped"
+    },
+    {
+      "id": 3,
+      "name": "protect-authorization-secret-custody",
+      "owners": ["DoveWAI-Protect"],
+      "references": ["automic-vault"],
+      "status": "mapped"
+    },
+    {
+      "id": 4,
+      "name": "worker-isolation",
+      "owners": ["DoveWAI-Engineering-Harness", "DoveWAI-Personal"],
+      "references": ["worktrunk", "ego-lite"],
+      "status": "mapped"
+    },
+    {
+      "id": 5,
+      "name": "code-intelligence-semantic-review",
+      "owners": ["DoveWAI-Engineering-Harness", "DoveWAI-Ark", "DoveWAI-Miner"],
+      "references": ["codegraph-family", "recurse-ml", "reslop"],
+      "status": "mapped"
+    },
+    {
+      "id": 6,
+      "name": "knowledge-translation-document-ingestion",
+      "owners": ["DoveWAI-Research-Radar", "DoveWAI-Miner", "DoveWAI-Ark", "DoveWAI-Translation"],
+      "references": ["chandra", "transloco", "ngx-device-detector", "ng-web-apis"],
+      "status": "mapped"
+    },
+    {
+      "id": 7,
+      "name": "training-capability-adaptation",
+      "owners": ["DoveWAI-Training", "DoveWAI-Compute"],
+      "references": ["LlamaFactory", "PEFT", "Transformers"],
+      "status": "mapped"
+    },
+    {
+      "id": 8,
+      "name": "final-verification-gate",
+      "owners": ["DoveWAI-Engineering-Harness", "DoveWAI-Protect"],
+      "blocked_by": [0,1,2,3,4,5,6,7],
+      "status": "deferred"
+    }
+  ]
+}
