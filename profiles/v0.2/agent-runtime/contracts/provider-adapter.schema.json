@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/profiles/v0.2/agent-runtime/contracts/provider-adapter.schema.json",
+  "title": "DoveWAI Agent Runtime Provider Adapter",
+  "type": "object",
+  "required": ["adapter_id", "kind", "version", "capabilities", "platforms"],
+  "properties": {
+    "adapter_id": { "type": "string", "minLength": 1 },
+    "kind": {
+      "enum": ["git", "github", "browser", "quota", "resource", "secret", "compute", "code_intelligence", "document_intelligence", "translation", "training", "other"]
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "provider": { "type": "string" },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "platforms": {
+      "type": "array",
+      "items": { "enum": ["windows", "linux", "macos", "android", "ios", "web", "other"] },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "local_first": { "type": "boolean" },
+    "network_required": { "type": "boolean" },
+    "supports_bounded_output": { "type": "boolean" },
+    "supports_structured_errors": { "type": "boolean" },
+    "supports_receipts": { "type": "boolean" },
+    "supports_dry_run": { "type": "boolean" },
+    "license": {
+      "type": "object",
+      "properties": {
+        "spdx": { "type": "string" },
+        "source_available": { "type": "boolean" },
+        "commercial_use_reviewed": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}
