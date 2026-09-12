@@ -1,0 +1,48 @@
+{
+  "version": "0.1",
+  "branch": "phase/axi-resource-protect-map-v01",
+  "testing_gate": "deferred_until_all_implementation_phases_complete",
+  "phases": [
+    {"id": 0, "name": "shared-contracts-provenance", "status": "implemented-in-protocol", "targets": ["DoveWAI-Protocol"]},
+    {"id": 1, "name": "axi", "status": "contract-complete", "targets": ["Engineering-Harness", "Personal"]},
+    {"id": 2, "name": "resource-broker", "status": "contract-complete", "targets": ["Engineering-Harness", "Personal", "Compute"]},
+    {"id": 3, "name": "protect", "status": "contract-complete", "targets": ["Protect", "Engineering-Harness", "Personal"]},
+    {"id": 4, "name": "worker-isolation", "status": "contract-complete", "targets": ["Engineering-Harness", "Personal"]},
+    {"id": 5, "name": "code-intelligence-semantic-review", "status": "contract-complete", "targets": ["Miner", "Ark", "Engineering-Harness"]},
+    {"id": 6, "name": "document-translation-ingestion", "status": "contract-complete", "targets": ["Research-Radar", "Miner", "Ark", "DoveWAI-Translation"]},
+    {"id": 7, "name": "training-adapters", "status": "contract-complete", "targets": ["Training-Data", "Compute"]},
+    {"id": 8, "name": "verification-and-testing", "status": "blocked-by-user-policy-until-phases-0-7-implemented", "targets": ["Engineering-Harness", "Protect", "Software-Factory"]}
+  ],
+  "contracts": [
+    "contracts/axi.schema.json",
+    "contracts/resource-state.schema.json",
+    "contracts/protect-decision.schema.json",
+    "contracts/worker.schema.json",
+    "contracts/code-intelligence.schema.json",
+    "contracts/document-intelligence.schema.json",
+    "contracts/translation.schema.json",
+    "contracts/training-job.schema.json"
+  ],
+  "external_reference_policy": {
+    "mandatory_external_dependency": false,
+    "rules": [
+      "learn architecture before reuse",
+      "verify license and dependency licenses",
+      "preserve attribution when code is reused",
+      "prefer DoveWAI-owned provider-neutral interfaces",
+      "never require proprietary services for baseline operation"
+    ]
+  },
+  "repo_access_blockers": [
+    "Engineering-Harness",
+    "Personal",
+    "Protect",
+    "Research-Radar",
+    "Miner",
+    "Ark",
+    "DoveWAI-Translation",
+    "Training-Data",
+    "Compute",
+    "Software-Factory"
+  ]
+}
