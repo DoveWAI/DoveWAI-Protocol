@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/profiles/v0.2/agent-runtime/contracts/resource-observation.schema.json",
+  "title": "DoveWAI Agent Runtime Resource Observation",
+  "type": "object",
+  "required": ["resource_id", "kind", "availability", "confidence", "stale"],
+  "properties": {
+    "resource_id": { "type": "string", "minLength": 1 },
+    "kind": {
+      "enum": ["model_provider", "model", "cpu", "gpu", "npu", "memory", "storage", "nas", "network", "cloud_credit", "api_rate_limit", "worker", "other"]
+    },
+    "scope": { "type": "string" },
+    "availability": { "enum": ["available", "limited", "unavailable", "unknown"] },
+    "remaining_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+    "resets_at": { "type": "string", "format": "date-time" },
+    "runway_seconds": { "type": "number", "minimum": 0 },
+    "cost_estimate": { "type": "number", "minimum": 0 },
+    "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+    "latency_ms": { "type": "number", "minimum": 0 },
+    "load_percent": { "type": "number", "minimum": 0, "maximum": 100 },
+    "free_bytes": { "type": "integer", "minimum": 0 },
+    "total_bytes": { "type": "integer", "minimum": 0 },
+    "locality": { "enum": ["local", "lan", "cloud", "unknown"] },
+    "privacy": { "enum": ["local_only", "private_remote", "public_remote", "unknown"] },
+    "confidence": { "enum": ["established", "estimated", "weak", "unknown"] },
+    "stale": { "type": "boolean" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "source": { "type": "string" },
+    "capabilities": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}
