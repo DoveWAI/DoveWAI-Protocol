@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/profiles/v0.2/agent-runtime/contracts/authorization-decision.schema.json",
+  "title": "DoveWAI Agent Runtime Authorization Decision",
+  "type": "object",
+  "required": ["decision", "principal_id", "task_id", "tool", "operation", "policy_id"],
+  "properties": {
+    "decision": { "enum": ["allow", "require_approval", "deny"] },
+    "principal_id": { "type": "string", "minLength": 1 },
+    "task_id": { "type": "string", "minLength": 1 },
+    "worker_id": { "type": "string" },
+    "launcher_id": { "type": "string" },
+    "tool": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "minLength": 1 },
+    "target": { "type": "string" },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "credential_names": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "secret_use": { "type": "boolean", "default": false },
+    "secret_disclosure": { "type": "boolean", "default": false },
+    "destructive": { "type": "boolean", "default": false },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "policy_id": { "type": "string", "minLength": 1 },
+    "policy_version": { "type": "string" },
+    "reason": { "type": "string" },
+    "approval_ref": { "type": "string" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "secret_disclosure": { "const": true } }, "required": ["secret_disclosure"] },
+      "then": { "not": { "properties": { "decision": { "const": "allow" } }, "required": ["decision"] } }
+    }
+  ],
+  "additionalProperties": false
+}

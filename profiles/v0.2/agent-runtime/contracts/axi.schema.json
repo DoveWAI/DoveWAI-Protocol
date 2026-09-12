@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.2/profiles/agent-runtime/contracts/axi.schema.json",
+  "title": "DoveWAI AXI Invocation Contract",
+  "type": "object",
+  "required": ["version", "adapter", "operation", "task_id", "request_id"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "adapter": {"type": "string", "minLength": 1},
+    "operation": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "arguments": {"type": "object", "additionalProperties": true},
+    "capability_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "resource_budget_ref": {"type": "string"},
+    "authorization_ref": {"type": "string"},
+    "worker_ref": {"type": "string"},
+    "non_interactive": {"type": "boolean", "default": true},
+    "destructive": {"type": "boolean", "default": false},
+    "evidence_required": {"type": "boolean", "default": true}
+  },
+  "additionalProperties": false
+}

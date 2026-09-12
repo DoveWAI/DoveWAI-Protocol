@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/profiles/v0.2/agent-runtime/contracts/axi-execution.schema.json",
+  "title": "DoveWAI Agent Runtime AXI Execution Contract",
+  "type": "object",
+  "required": ["adapter", "operation", "interactive", "bounded_output", "destructive"],
+  "properties": {
+    "adapter": { "type": "string", "minLength": 1 },
+    "provider": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "minLength": 1 },
+    "interactive": { "type": "boolean", "const": false },
+    "bounded_output": { "type": "boolean" },
+    "destructive": { "type": "boolean" },
+    "timeout_seconds": { "type": "integer", "minimum": 1 },
+    "output_limit_bytes": { "type": "integer", "minimum": 1 },
+    "full_evidence_ref": { "type": "string" },
+    "request_id": { "type": "string" },
+    "correlation_id": { "type": "string" },
+    "expected_exit_codes": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "uniqueItems": true
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "metadata": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}

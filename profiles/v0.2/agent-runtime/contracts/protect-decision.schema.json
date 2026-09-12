@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.2/profiles/agent-runtime/contracts/protect-decision.schema.json",
+  "title": "DoveWAI Protect Decision",
+  "type": "object",
+  "required": ["version", "decision_id", "task_id", "subject", "action", "decision", "decided_at"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "decision_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "action": {"type": "string", "minLength": 1},
+    "target": {"type": "string"},
+    "tool": {"type": "string"},
+    "decision": {"enum": ["allow", "require_approval", "deny"]},
+    "reason": {"type": "string"},
+    "scope": {"type": "object", "additionalProperties": true},
+    "credential_ref": {"type": "string"},
+    "secret_disclosure": {"type": "boolean", "default": false},
+    "grant_expires_at": {"type": "string", "format": "date-time"},
+    "decided_at": {"type": "string", "format": "date-time"},
+    "evidence": {"type": "array", "items": {"type": "object", "additionalProperties": true}}
+  },
+  "additionalProperties": false
+}

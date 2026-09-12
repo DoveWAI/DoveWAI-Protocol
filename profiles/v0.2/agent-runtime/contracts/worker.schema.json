@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.2/profiles/agent-runtime/contracts/worker.schema.json",
+  "title": "DoveWAI Worker Allocation",
+  "type": "object",
+  "required": ["version", "worker_id", "task_id", "isolation", "created_at"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "worker_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "isolation": {"type": "object", "required": ["workspace"], "properties": {"workspace": {"type": "string", "minLength": 1}, "git_worktree": {"type": "string"}, "branch": {"type": "string"}, "browser_session": {"type": "string"}, "profile_scope": {"type": "string"}}, "additionalProperties": false},
+    "capability_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "authorization_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "resource_budget_ref": {"type": "string"},
+    "credential_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "receipt_namespace": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dovewai.org/protocol/v0.2/profiles/agent-runtime/contracts/training-job.schema.json",
+  "title": "DoveWAI Training Job",
+  "type": "object",
+  "required": ["version", "job_id", "base_model", "method", "dataset_refs", "resource_policy"],
+  "properties": {
+    "version": {"const": "0.1"},
+    "job_id": {"type": "string", "minLength": 1},
+    "base_model": {"type": "string", "minLength": 1},
+    "method": {"enum": ["lora", "qlora", "full", "preference", "distillation", "adapter", "evaluation_only"]},
+    "dataset_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "resource_policy": {"type": "object", "additionalProperties": true},
+    "hardware_constraints": {"type": "object", "additionalProperties": true},
+    "provider": {"type": "string"},
+    "output_ref": {"type": "string"},
+    "license_policy": {"type": "object", "additionalProperties": true},
+    "provenance": {"type": "array", "items": {"type": "object", "additionalProperties": true}}
+  },
+  "additionalProperties": false
+}
